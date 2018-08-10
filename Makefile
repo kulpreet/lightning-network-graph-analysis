@@ -1,7 +1,7 @@
 CXX=g++
 RM=rm -f
 
-readgraph:
+readgraph: readgraph.cpp
 	g++ -lboost_graph readgraph.cpp -o readgraph
 
 clean:
