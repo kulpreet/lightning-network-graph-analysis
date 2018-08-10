@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns 
+                             http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="name" for="node" attr.name="name" attr.type="string"></key>
+  <key id="chan_point" for="edge" attr.name="chan_point" attr.type="string"></key>
+  <key id="last_update" for="edge" attr.name="last_update" attr.type="string"></key>
+  <key id="capacity" for="edge" attr.name="capacity" attr.type="int"></key>
+  <key id="time_lock_delta" for="edge" attr.name="time_lock_delta" attr.type="int"></key>
+  <key id="min_htlc" for="edge" attr.name="min_htlc" attr.type="int">
+    <default>0</default>
+  </key>
+  <key id="fee_base_msat" for="edge" attr.name="fee_base_msat" attr.type="int"></key>
+  <key id="fee_rate_milli_msat" for="edge" attr.name="fee_rate_milli_msat" attr.type="int"></key>
+  <key id="disabled" for="edge" attr.name="disabled" attr.type="string"></key>
+  <graph id="LND" parse.nodes="1210" parse.edges="8612" parse.nodeids="free" parse.edgeids="free" parse.order="nodesfirst" edgedefault="directed">
+    <node id="020009f483fc1c31078d172a0ce7983a685b881bbe842560b86cb383024a37070a">
+      <data key="name">node_020009f483fc</data>
+    </node>
+    <node id="02006300de37c9177fd137cc06f16d9c351dbdcc6f357912eb7e09f4215d58aa41">
+      <data key="name">CoinClip-EE0430EF</data>
+    </node>
+    <node id="02006e026ff5dae47924d76a103814d551169a74f562ec8f1760476e063d5bc0ea">
+      <data key="name">eclair</data>
+    </node>
+    <edge id="1352691772262318080" source="033e90d7d899d83b1e6485b8fe63244c32aaf0f7f4ead86df08c0d8298cf6fa32d" target="02602e15d2efad3632d78f73e89a2634e37e0c9f39cb5c1409d1dd38ca5e977ac4">
+      <data key="chan_point">2934a9dc58bd5afc7bca32f9dd4933d98cea49e6a8a75509a480ad50dd0aa26b:0</data>
+      <data key="last_update">1511173112</data>
+      <data key="capacity">16777216</data>
+      <data key="time_lock_delta">144</data>
+      <data key="min_htlc">0</data>
+      <data key="fee_base_msat">1000</data>
+      <data key="fee_rate_milli_msat">1</data>
+      <data key="disabled">false</data>
+    </edge>
+    <edge id="1352691772262318080" source="02602e15d2efad3632d78f73e89a2634e37e0c9f39cb5c1409d1dd38ca5e977ac4" target="033e90d7d899d83b1e6485b8fe63244c32aaf0f7f4ead86df08c0d8298cf6fa32d">
+      <data key="chan_point">2934a9dc58bd5afc7bca32f9dd4933d98cea49e6a8a75509a480ad50dd0aa26b:0</data>
+      <data key="last_update">1511173112</data>
+      <data key="capacity">16777216</data>
+      <data key="time_lock_delta">144</data>
+      <data key="min_htlc">0</data>
+      <data key="fee_base_msat">1000</data>
+      <data key="fee_rate_milli_msat">1</data>
+      <data key="disabled">false</data>
+    </edge>
+    <edge id="1352693971283738624" source="033e90d7d899d83b1e6485b8fe63244c32aaf0f7f4ead86df08c0d8298cf6fa32d" target="02464bfaaae78b98268a6a6d7e8f6a110c60dd1293811d6029b11ee9edb4bbf869">
+      <data key="chan_point">5f5a6fa569b0fdc51059fc8c02e5c7322987a58ed42242ee22b3282d5300250a:0</data>
+      <data key="last_update">1521393434</data>
+      <data key="capacity">16777216</data>
+      <data key="time_lock_delta">144</data>
+      <data key="min_htlc">0</data>
+      <data key="fee_base_msat">1000</data>
+      <data key="fee_rate_milli_msat">1</data>
+      <data key="disabled">false</data>
+    </edge>
+    <edge id="1352693971283738624" source="02464bfaaae78b98268a6a6d7e8f6a110c60dd1293811d6029b11ee9edb4bbf869" target="033e90d7d899d83b1e6485b8fe63244c32aaf0f7f4ead86df08c0d8298cf6fa32d">
+      <data key="chan_point">5f5a6fa569b0fdc51059fc8c02e5c7322987a58ed42242ee22b3282d5300250a:0</data>
+      <data key="last_update">1521393434</data>
+      <data key="capacity">16777216</data>
+      <data key="time_lock_delta">4</data>
+      <data key="fee_base_msat">10</data>
+      <data key="fee_rate_milli_msat">10</data>
+      <data key="disabled">false</data>
+    </edge>
+  </graph>
+</graphml>
