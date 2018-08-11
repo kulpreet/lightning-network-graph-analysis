@@ -15,11 +15,22 @@ template <class Graph> struct degrees {
 
     std::cout << " in + out degree " << degree(v, g) << std::endl;
     std::cout << " out degree " << out_degree(v, g) << std::endl;    
-    std::cout << " in degree " << in_degree(v, g) << std::endl;
-    
+    std::cout << " in degree " << in_degree(v, g) << std::endl;    
   }
   Graph& g;
 };
+
+typedef graph_traits<LitGraph>::degree_size_type Degree;
+
+// return by value, count on RVO
+void get_degrees(vector<Degree>& in_degrees, vector<Degree>& out_degrees, vector<Degree>& degrees, LitGraph& g) {  
+  graph_traits<LitGraph>::vertex_iterator i, end;
+  for (boost::tie(i,end) = vertices(g); i != end; ++i) {
+    in_degrees.push_back(in_degree(*i, g));
+    out_degrees.push_back(out_degree(*i, g));
+    degrees.push_back(degree(*i, g));
+  }
+}
 
 template <class Graph> struct exercise_vertex {
   exercise_vertex(Graph& g_) : g(g_) { }
