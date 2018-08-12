@@ -1,10 +1,11 @@
 
-* Graph Analysis [2/5]
+* Graph Analysis [4/6]
 
 1. [X] Convert json to graphml
 2. [X] Load graphml in BGL
-3. [ ] Run in/out degree algorithm
-4. [ ] Run biconnected graph algo
-5. [ ] Run atriculation points algo
+3. [X] Run in/out degree algorithm
+4. [X] Find mean and variance on degrees
+5. [ ] Run biconnected graph algo
+6. [ ] Run atriculation points algo
 
 * Presentation [/]

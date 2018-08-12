@@ -23,6 +23,12 @@ int main() {
     std::cout << *i << ' ';
   }
   std::cout << endl;
- 
+
+  map<string, double> stats = get_degrees_stats(g);
+
+  for (map<string, double>::const_iterator i = stats.begin(); i != stats.end(); ++i) {
+    std::cout << i->first << ' ' << i->second << endl;
+  }
+
   return 0;
 }

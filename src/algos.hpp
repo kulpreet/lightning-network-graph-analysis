@@ -1,4 +1,11 @@
+#include <boost/accumulators/accumulators.hpp>
+#include <boost/accumulators/statistics/stats.hpp>
+#include <boost/accumulators/statistics/mean.hpp>
+#include <boost/accumulators/statistics/variance.hpp>
+
 #include "readgraph.hpp"
+
+using namespace boost::accumulators;
 
 template <class Graph> struct degrees {
 
@@ -30,6 +37,25 @@ void get_degrees(vector<Degree>& in_degrees, vector<Degree>& out_degrees, vector
     out_degrees.push_back(out_degree(*i, g));
     degrees.push_back(degree(*i, g));
   }
+}
+
+// return by value, count on RVO
+map<string, double> get_degrees_stats(LitGraph& g) {  
+  graph_traits<LitGraph>::vertex_iterator i, end;
+  accumulator_set<Degree, stats<tag::mean, tag::variance > > in_degrees, out_degrees, degrees;
+  map<string, double> result;
+  for (boost::tie(i,end) = vertices(g); i != end; ++i) {
+    in_degrees(in_degree(*i, g));
+    out_degrees(out_degree(*i, g));
+    degrees(degree(*i, g));
+  }
+  result["in_degrees_mean"] = mean(in_degrees);
+  result["in_degrees_variance"] = variance(in_degrees);
+  result["out_degrees_mean"] = mean(out_degrees);
+  result["out_degrees_variance"] = variance(out_degrees);
+  result["degrees_mean"] = mean(degrees);
+  result["degrees_variance"] = variance(degrees);
+  return result;
 }
 
 template <class Graph> struct exercise_vertex {
