@@ -22,7 +22,10 @@ struct LitEdge {
   string disabled;
   };
 
-typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS,
+// typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS,
+//                               LitVertex, LitEdge> LitGraph;
+
+typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
                               LitVertex, LitEdge> LitGraph;
 
 typedef graph_traits<LitGraph>::vertex_iterator vertex_iter;

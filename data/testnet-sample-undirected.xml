@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns 
+                             http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="name" for="node" attr.name="name" attr.type="string" />
+  <graph id="LND" parse.nodes="3" parse.edges="4" parse.nodeids="free" parse.edgeids="free" parse.order="nodesfirst" edgedefault="undirected">
+    <node last_update="1527735826" id="A" color="#000000" type="string">
+      <data key="name">node_020009f483fc</data>
+    </node>
+    <node last_update="1526936176" id="B"  color="#f4d942" type="string">
+      <data key="name">CoinClip-EE0430EF</data>
+    </node>
+    <node last_update="1530540138" id="C" color="#49daaa" type="string">
+      <data key="name">eclair</data>
+    </node>
+    <edge channel_id="AB" channel_point="AB:0" last_update="1511173112" source="A" target="B" capacity="16777216" timelock_delta="144" min_htlc="0" fee_base_msat="1000" fee_rate_milli_msat="1" disabled="false"></edge>
+    <edge channel_id="AC" channel_point="AC:0" last_update="1511173112" source="A" target="C" capacity="16777216" timelock_delta="144" min_htlc="0" fee_base_msat="1000" fee_rate_milli_msat="1" disabled="false"></edge>
+    <edge channel_id="BC" channel_point="BC:0" last_update="1521393434" source="B" target="C" capacity="16777216" timelock_delta="4" min_htlc="0" fee_base_msat="10" fee_rate_milli_msat="10" disabled="false"></edge>
+    <edge channel_id="CA" channel_point="CA:0" last_update="1521393434" source="C" target="A" capacity="16777216" timelock_delta="4" min_htlc="0" fee_base_msat="10" fee_rate_milli_msat="10" disabled="false"></edge>
+  </graph>
+</graphml>
