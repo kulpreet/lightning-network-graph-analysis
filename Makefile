@@ -1,4 +1,5 @@
-CXX=g++
+LDFLAGS=-L/usr/local/lib
+
 RM=rm -f
 
 all: run build_test
@@ -10,13 +11,13 @@ run.o: src/readgraph.cpp src/readgraph.hpp src/run.cpp src/algos.hpp
 	$(CXX) -c src/run.cpp
 
 run: run.o readgraph.o
-	$(CXX) -lboost_graph -o readgraph run.o readgraph.o
+	$(CXX) $(LDFLAGS) -o readgraph run.o readgraph.o -lboost_graph
 
 readgraph_test.o: src/readgraph.cpp src/readgraph.hpp src/readgraph_test.cpp
-	$(CXX) -c src/readgraph_test.cpp
+	$(CXX) $(LDFLAGS) -c src/readgraph_test.cpp
 
 build_test: readgraph.o readgraph_test.o
-	$(CXX) -lboost_graph -lboost_unit_test_framework -o test_readgraph readgraph.o readgraph_test.o
+	$(CXX) $(LDFLAGS) -o test_readgraph readgraph_test.o readgraph.o -lboost_graph -lboost_unit_test_framework
 
 test: build_test
 	./test_readgraph
