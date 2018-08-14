@@ -1,6 +1,7 @@
 #include <boost/graph/graphml.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <iostream>
+#include <boost/graph/biconnected_components.hpp>
 
 using namespace boost;
 using namespace std;
@@ -12,6 +13,8 @@ struct LitVertex {
 };
 
 struct LitEdge {
+  string source;
+  string target;
   string chan_point;
   string last_update;
   int capacity;
@@ -20,7 +23,8 @@ struct LitEdge {
   int fee_base_msat;
   int fee_rate_milli_msat;
   string disabled;
-  };
+  int component;
+};
 
 // typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS,
 //                               LitVertex, LitEdge> LitGraph;
@@ -30,5 +34,6 @@ typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
 
 typedef graph_traits<LitGraph>::vertex_iterator vertex_iter;
 typedef graph_traits<LitGraph>::vertex_descriptor Vertex;
+
 
 void readgraph(LitGraph& g);

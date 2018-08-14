@@ -7,6 +7,24 @@
 
 using namespace boost::accumulators;
 
+void get_articulation_points(LitGraph& g) {  
+  std::vector<Vertex> art_points;
+  std::pair<std::size_t, std::back_insert_iterator<std::vector<Vertex> > >
+    results = biconnected_components(g, get(&LitEdge::component, g), std::back_inserter(art_points));
+  std::cerr << "Found " << results.first << " biconnected components.\n";
+
+  articulation_points(g, std::back_inserter(art_points));
+  std::cerr << "Found " << art_points.size() << " articulation points.\n";
+
+  graph_traits < LitGraph >::edge_iterator ei, ei_end;
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
+    std::cout << g[*ei].source << " -- " 
+              << g[*ei].target
+              << "[label=\"" << g[*ei].component << "\"]\n";
+  std::cout << "}\n";  
+}
+
+
 template <class Graph> struct degrees {
 
   degrees(Graph& g_) : g(g_) { }
@@ -77,29 +95,29 @@ template <class Graph> struct exercise_vertex {
       {
         e = *out_i;
         Vertex src = source(e, g), targ = target(e, g);
-        std::cout << "(" << get(vertex_id, src)
+        std::cout << "(" << g[e].capacity
                   << "," << get(vertex_id, targ) << ") ";
       }
     std::cout << std::endl;
 
-    // Write out the incoming edges
-    std::cout << "\tin-edges: ";
-    typename graph_traits<Graph>::in_edge_iterator in_i, in_end;
-    for (boost::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
-      {
-        e = *in_i;
-        Vertex src = source(e, g), targ = target(e, g);
-        std::cout << "(" << get(vertex_id, src)
-                  << "," << get(vertex_id, targ) << ") ";
-      }
-    std::cout << std::endl;
+    // // Write out the incoming edges
+    // std::cout << "\tin-edges: ";
+    // typename graph_traits<Graph>::in_edge_iterator in_i, in_end;
+    // for (boost::tie(in_i, in_end) = in_edges(v, g); in_i != in_end; ++in_i)
+    //   {
+    //     e = *in_i;
+    //     Vertex src = source(e, g), targ = target(e, g);
+    //     std::cout << "(" << get(vertex_id, src)
+    //               << "," << get(vertex_id, targ) << ") ";
+    //   }
+    // std::cout << std::endl;
 
-    // Write out all adjacent vertices
-    std::cout << "\tadjacent vertices: ";
-    typename graph_traits<Graph>::adjacency_iterator ai, ai_end;
-    for (boost::tie(ai,ai_end) = adjacent_vertices(v, g);  ai != ai_end; ++ai)
-      std::cout << get(vertex_id, *ai) <<  " ";
-    std::cout << std::endl;
+    // // Write out all adjacent vertices
+    // std::cout << "\tadjacent vertices: ";
+    // typename graph_traits<Graph>::adjacency_iterator ai, ai_end;
+    // for (boost::tie(ai,ai_end) = adjacent_vertices(v, g);  ai != ai_end; ++ai)
+    //   std::cout << get(vertex_id, *ai) <<  " ";
+    // std::cout << std::endl;
   }
   Graph& g;
 };
