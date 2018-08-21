@@ -7,12 +7,15 @@ using namespace boost;
 using namespace std;
 
 struct LitVertex {
+  string id;
+  string pub_key;
   string name;
   string last_update;
   string alias;
 };
 
 struct LitEdge {
+  string id;
   string source;
   string target;
   string chan_point;

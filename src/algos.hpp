@@ -7,23 +7,54 @@
 
 using namespace boost::accumulators;
 
-void get_articulation_points(LitGraph& g) {  
+void print_edges_with_components(LitGraph& g){
+  graph_traits<LitGraph>::vertex_descriptor src, tgt;
+  graph_traits < LitGraph >::edge_iterator ei, ei_end;
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+    src = source(*ei, g);
+    tgt = target(*ei, g);  
+    std::cout << g[src].name << " -- " 
+              << g[tgt].name
+              << " [label=\"" << g[*ei].component << "\"]\n";
+    std::cout << "}\n";
+  }
+}
+
+template <class Graph> struct compare_by_degree {
+  compare_by_degree(Graph& g_) : g(g_) {}
+  Graph& g;
+  int operator() (const Vertex& a, const Vertex& b) const {
+    return degree(a, g) > degree(b, g);
+  }
+};
+
+template <class Graph> struct print_vertex {
+  print_vertex(Graph& g_) : g(g_) {}
+  Graph& g;
+  void operator() (const Vertex& v) const {
+    std::cout << "vertex: " << g[v].name
+              << " :: " << g[v].pub_key
+              << " :: " << degree(v, g)
+              << std::endl;
+  }
+};
+
+void get_articulation_points(LitGraph& g) {
   std::vector<Vertex> art_points;
   std::pair<std::size_t, std::back_insert_iterator<std::vector<Vertex> > >
     results = biconnected_components(g, get(&LitEdge::component, g), std::back_inserter(art_points));
-  std::cerr << "Found " << results.first << " biconnected components.\n";
-
+  std::cout << "Found " << results.first << " biconnected components.\n";
+  
   articulation_points(g, std::back_inserter(art_points));
-  std::cerr << "Found " << art_points.size() << " articulation points.\n";
+  std::cout << "Found " << art_points.size() << " articulation points.\n";
 
-  graph_traits < LitGraph >::edge_iterator ei, ei_end;
-  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei)
-    std::cout << g[*ei].source << " -- " 
-              << g[*ei].target
-              << "[label=\"" << g[*ei].component << "\"]\n";
-  std::cout << "}\n";  
+  //print_edges_with_components(g);
+
+  // sort articulation
+  std::sort(art_points.begin(), art_points.end(), compare_by_degree<LitGraph>(g));
+  // print top art points
+  std::for_each(art_points.begin(), art_points.end(), print_vertex<LitGraph>(g));
 }
-
 
 template <class Graph> struct degrees {
 
@@ -95,8 +126,8 @@ template <class Graph> struct exercise_vertex {
       {
         e = *out_i;
         Vertex src = source(e, g), targ = target(e, g);
-        std::cout << "(" << g[e].capacity
-                  << "," << get(vertex_id, targ) << ") ";
+        std::cout << "(" << g[src].name
+                  << "," << g[targ].name << ") ";
       }
     std::cout << std::endl;
 

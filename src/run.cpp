@@ -6,8 +6,8 @@ int main() {
   
   // boost::print_graph(g, get(&LitVertex::name, g), std::cout);
 
-  std::for_each(vertices(g).first, vertices(g).second,
-                    exercise_vertex<LitGraph>(g));
+  // std::for_each(vertices(g).first, vertices(g).second,
+  //                   exercise_vertex<LitGraph>(g));
 
   
   //boost::write_graphml(std::cout, g, dp);

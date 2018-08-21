@@ -8,7 +8,7 @@ all: run build_test
 readgraph.o: src/readgraph.cpp src/readgraph.hpp
 	$(CXX) $(CXXFLAGS) -c src/readgraph.cpp 
 
-run.o: src/readgraph.cpp src/readgraph.hpp src/run.cpp src/algos.hpp
+run.o: src/readgraph.cpp src/readgraph.hpp src/readgraph.cpp src/run.cpp src/algos.hpp
 	$(CXX) $(CXXFLAGS) -c src/run.cpp
 
 run: run.o readgraph.o

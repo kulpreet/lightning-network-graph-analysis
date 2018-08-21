@@ -3,6 +3,7 @@
 boost::dynamic_properties build_properties(LitGraph& g) {
   boost::dynamic_properties dp;
   dp.property("name", get(&LitVertex::name, g));
+  dp.property("pub_key", get(&LitVertex::pub_key, g));
 
   dp.property("source", get(&LitEdge::source, g));
   dp.property("target", get(&LitEdge::target, g));
