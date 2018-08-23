@@ -2,10 +2,17 @@
 #include <boost/accumulators/statistics/stats.hpp>
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/variance.hpp>
+#include <boost/graph/betweenness_centrality.hpp>
 
 #include "readgraph.hpp"
 
 using namespace boost::accumulators;
+
+struct centrality_s {
+  string name;
+  string pub_key;
+  double centrality;
+};
 
 void print_edges_with_components(LitGraph& g){
   graph_traits<LitGraph>::vertex_descriptor src, tgt;
@@ -16,15 +23,29 @@ void print_edges_with_components(LitGraph& g){
     std::cout << g[src].name << " -- " 
               << g[tgt].name
               << " [label=\"" << g[*ei].component << "\"]\n";
-    std::cout << "}\n";
   }
 }
+
+template <class centrality_s> struct compare_by_centrality {
+  int operator() (const centrality_s& a, const centrality_s& b) const {
+    return a.centrality > b.centrality;
+  }
+};
 
 template <class Graph> struct compare_by_degree {
   compare_by_degree(Graph& g_) : g(g_) {}
   Graph& g;
   int operator() (const Vertex& a, const Vertex& b) const {
-    return degree(a, g) > degree(b, g);
+    return degree(a, g) < degree(b, g);
+  }
+};
+
+template <class Graph> struct print_centrality_s {
+  void operator() (const centrality_s& s) const {
+    std::cout << "\"" << s.name << "\""
+              << ",\"" << s.centrality << "\""
+              << ",\"" << s.pub_key << "\""
+              << std::endl;
   }
 };
 
@@ -38,6 +59,41 @@ template <class Graph> struct print_vertex {
               << std::endl;
   }
 };
+
+void get_centrality(LitGraph& g) {
+  std::vector<double> centrality(num_vertices(g));
+  graph_traits<LitGraph>::vertex_iterator i, end;
+  
+  std::vector<centrality_s> centrality_vector(num_vertices(g));
+  
+  brandes_betweenness_centrality(
+                                 g,
+                                 centrality_map(make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()))
+                                 .vertex_index_map(get(vertex_index, g)));
+
+  relative_betweenness_centrality(g, make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()));
+  
+  for (boost::tie(i,end) = vertices(g); i != end; ++i) {
+    centrality_s c = {
+      g[*i].name,
+      g[*i].pub_key,
+      centrality[*i]
+    };
+    centrality_vector.push_back(c);    
+    // std::cout << g[*i].name << " :: "
+    //           << g[*i].pub_key << " :: "
+    //           << centrality[*i] << endl;
+  }
+
+  // sort centrality vector
+  std::sort(centrality_vector.begin(), centrality_vector.end(), compare_by_centrality<centrality_s>());
+
+  std::cout << "alias,centrality,pub_key" << std::endl;
+  std::for_each(centrality_vector.begin(), centrality_vector.begin() + 20, print_centrality_s<centrality_s>());  
+
+  double dominance =  central_point_dominance(g, make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()));
+  std::cout << " dominance :: " << dominance;
+}
 
 void get_articulation_points(LitGraph& g) {
   std::vector<Vertex> art_points;
@@ -53,7 +109,7 @@ void get_articulation_points(LitGraph& g) {
   // sort articulation
   std::sort(art_points.begin(), art_points.end(), compare_by_degree<LitGraph>(g));
   // print top art points
-  std::for_each(art_points.begin(), art_points.end(), print_vertex<LitGraph>(g));
+  std::for_each(art_points.begin(), art_points.begin(), print_vertex<LitGraph>(g));
 }
 
 template <class Graph> struct degrees {

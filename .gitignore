@@ -3,3 +3,4 @@ readgraph
 data/testnet.xml
 *.o
 test_readgraph
+out

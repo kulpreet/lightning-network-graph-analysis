@@ -1,11 +1,23 @@
 
-* Graph Analysis [4/6]
+* Graph Analysis [6/7]
 
 1. [X] Convert json to graphml
 2. [X] Load graphml in BGL
 3. [X] Run in/out degree algorithm
 4. [X] Find mean and variance on degrees
-5. [ ] Run biconnected graph algo
-6. [ ] Run atriculation points algo
+5. [X] Run biconnected graph algo
+6. [X] Run atriculation points algo
+7. [ ] Run centrality algorithm
+
+* Analysis Output [0/3]
+
+1. [ ] Centrality
+2. [ ] Articulation points with the highest degrees
+3. [ ] Biconnected components sorted by size
+   1. [ ] Component number
+   2. [ ] Number of nodes in the component
+   3. [ ] Pubkeys of nodes in the component to be downloaded as a list of ids only
 
 * Presentation [/]
+
+1.
