@@ -109,7 +109,8 @@ void get_articulation_points(LitGraph& g) {
   // sort articulation
   std::sort(art_points.begin(), art_points.end(), compare_by_degree<LitGraph>(g));
   // print top art points
-  std::for_each(art_points.begin(), art_points.begin(), print_vertex<LitGraph>(g));
+  std::cout << "alias,degree,pub_key" << std::endl;
+  std::for_each(art_points.begin(), art_points.end(), print_vertex<LitGraph>(g));
 }
 
 template <class Graph> struct degrees {
