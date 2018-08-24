@@ -29,13 +29,17 @@ int main() {
   // }
   // std::cout << endl;
 
-  map<string, double> stats = get_degrees_stats(g);
+  std::cout << "Number of vertices: " << num_vertices(g) << endl;
 
-  for (map<string, double>::const_iterator i = stats.begin(); i != stats.end(); ++i) {
-    std::cout << i->first << ' ' << i->second << endl;
-  }
+  // map<string, double> stats = get_degrees_stats(g);
+
+  // for (map<string, double>::const_iterator i = stats.begin(); i != stats.end(); ++i) {
+  //   std::cout << i->first << ' ' << i->second << endl;
+  // }
 
   get_articulation_points(g);
+
+  get_centrality(g);
   
   return 0;
 }

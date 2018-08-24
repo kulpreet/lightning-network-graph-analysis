@@ -4,6 +4,8 @@
 #include <boost/accumulators/statistics/variance.hpp>
 #include <boost/graph/betweenness_centrality.hpp>
 
+#include <numeric>
+
 #include "readgraph.hpp"
 
 using namespace boost::accumulators;
@@ -19,10 +21,12 @@ void print_edges_with_components(LitGraph& g){
   graph_traits < LitGraph >::edge_iterator ei, ei_end;
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     src = source(*ei, g);
-    tgt = target(*ei, g);  
-    std::cout << g[src].name << " -- " 
-              << g[tgt].name
-              << " [label=\"" << g[*ei].component << "\"]\n";
+    tgt = target(*ei, g);
+    if (degree(src, g) > 1 && degree(src, g) > 1) {
+      std::cout << g[src].name << " -- " 
+                << g[tgt].name
+                << " [label=\"" << g[*ei].component << "\"]\n";
+    }
   }
 }
 
@@ -36,15 +40,15 @@ template <class Graph> struct compare_by_degree {
   compare_by_degree(Graph& g_) : g(g_) {}
   Graph& g;
   int operator() (const Vertex& a, const Vertex& b) const {
-    return degree(a, g) < degree(b, g);
+    return degree(a, g) > degree(b, g);
   }
 };
 
 template <class Graph> struct print_centrality_s {
   void operator() (const centrality_s& s) const {
     std::cout << "\"" << s.name << "\""
-              << ",\"" << s.centrality << "\""
-              << ",\"" << s.pub_key << "\""
+              << "," << s.centrality
+              << "," << s.pub_key
               << std::endl;
   }
 };
@@ -53,9 +57,9 @@ template <class Graph> struct print_vertex {
   print_vertex(Graph& g_) : g(g_) {}
   Graph& g;
   void operator() (const Vertex& v) const {
-    std::cout << "vertex: " << g[v].name
-              << " :: " << g[v].pub_key
-              << " :: " << degree(v, g)
+    std::cout << "\"" << g[v].name << "\""
+              << "," << degree(v, g)
+              << "," << g[v].pub_key
               << std::endl;
   }
 };
@@ -88,29 +92,107 @@ void get_centrality(LitGraph& g) {
   // sort centrality vector
   std::sort(centrality_vector.begin(), centrality_vector.end(), compare_by_centrality<centrality_s>());
 
+  
+  std::cout << endl << endl;
+  std::cout << "CENTRALITY," << std::endl;
   std::cout << "alias,centrality,pub_key" << std::endl;
   std::for_each(centrality_vector.begin(), centrality_vector.begin() + 20, print_centrality_s<centrality_s>());  
+  std::cout << endl << endl;
 
   double dominance =  central_point_dominance(g, make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()));
-  std::cout << " dominance :: " << dominance;
+  std::cout << endl << endl;
+  std::cout << "DOMINANCE :: " << dominance;
+}
+
+void sort_and_print_art_points(std::vector<Vertex>& art_points, LitGraph& g){
+  std::sort(art_points.begin(), art_points.end(), compare_by_degree<LitGraph>(g));
+  // print top art points
+  std::cout << endl << endl;
+  std::cout << "All Articulation Points," << std::endl;
+  std::cout << "alias,degree,pub_key" << std::endl;
+  std::for_each(art_points.begin(), art_points.end(), print_vertex<LitGraph>(g));
+}
+
+void find_non_singleton_components(std::vector<Vertex>& art_points, LitGraph& g){
+  
+  // make a map component id to component size
+  std::map<int, int> component_sizes;
+  std::vector<Vertex>::iterator i;
+
+  graph_traits < LitGraph >::edge_iterator ei, ei_end;
+  graph_traits<LitGraph>::out_edge_iterator out_i, out_end;
+
+  typedef graph_traits< LitGraph >::edge_descriptor Edge;
+  std::vector<Edge> bridges;
+  std::set<int> component_ids;
+  std::map<int, set<int> > interesting_art_points;
+  int num_interesting;
+
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+    component_sizes[g[*ei].component]++;
+  }
+  
+  // iterate over all edges
+  // select those edges where component size on both vertices are greater than 1
+  for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
+    if ( component_sizes[g[*ei].component] == 1 ) {
+      bridges.push_back(*ei);
+    }
+  }
+
+  // iterate over all art points
+  for(i = art_points.begin(); i != art_points.end(); i++) {
+    // get all the components for all the edges of the art points
+    component_ids.clear();
+    for (boost::tie(out_i, out_end) = out_edges(*i, g); out_i != out_end; ++out_i) {
+      component_ids.insert(g[*out_i].component);
+    } 
+    // find the number of components the art point is connecting
+    num_interesting = std::accumulate(component_ids.begin(), component_ids.end(), 0,
+                                      [&component_sizes](int a, int cid){
+                                        if (component_sizes[cid] > 5) {
+                                          a = a + 1;
+                                        }
+                                        return a;
+                                      });
+    // std::cout << "art point " << *i << " num components = " << component_ids.size() << std::endl;
+    // std::cout << "art point " << *i << " num interesting = " << num_interesting << std::endl;
+    // return art points that have 2 or more components with size > 1/2/3/4/5
+    if ( num_interesting > 1 ) {
+      // std::cout << "art point is an interesting art point " << *i << std::endl;
+      interesting_art_points[*i] = component_ids;
+    }
+  }
+  std::cout << "Found components: " << component_sizes.size() << std::endl;
+  // for(std::map<int, int>::iterator x = component_sizes.begin(); x != component_sizes.end(); x++){
+  //   std::cout << "component id " << x->first << " with size = " << x->second << endl;
+  // }
+
+  std::cout << "Found interesting art points: " << interesting_art_points.size() << std::endl;
+
+  std::cout << endl << endl;
+  std::cout << "Key Articulation Points," << std::endl;
+  std::cout << "alias,num components, degree, pub_key" << std::endl;
+  for(std::map<int, set<int> >::iterator x = interesting_art_points.begin(); x != interesting_art_points.end(); x++) {
+    std::cout << "\"" << g[x->first].name << "\""
+              << "," << (x->second).size()
+              << "," << degree(x->first, g)
+              << "," << g[x->first].pub_key
+              << endl;
+  }
+  std::cout << endl << endl;
 }
 
 void get_articulation_points(LitGraph& g) {
   std::vector<Vertex> art_points;
   std::pair<std::size_t, std::back_insert_iterator<std::vector<Vertex> > >
     results = biconnected_components(g, get(&LitEdge::component, g), std::back_inserter(art_points));
-  std::cout << "Found " << results.first << " biconnected components.\n";
-  
-  articulation_points(g, std::back_inserter(art_points));
+
+  std::cout << "Found " << results.first << " biconnected components.\n";    
   std::cout << "Found " << art_points.size() << " articulation points.\n";
 
-  //print_edges_with_components(g);
-
-  // sort articulation
-  std::sort(art_points.begin(), art_points.end(), compare_by_degree<LitGraph>(g));
-  // print top art points
-  std::cout << "alias,degree,pub_key" << std::endl;
-  std::for_each(art_points.begin(), art_points.end(), print_vertex<LitGraph>(g));
+  find_non_singleton_components(art_points, g);
+  sort_and_print_art_points(art_points, g);
 }
 
 template <class Graph> struct degrees {
