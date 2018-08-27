@@ -5,6 +5,7 @@
 #include <boost/graph/betweenness_centrality.hpp>
 
 #include <numeric>
+#include <fstream>
 
 #include "readgraph.hpp"
 
@@ -65,6 +66,7 @@ template <class Graph> struct print_vertex {
 };
 
 void get_centrality(LitGraph& g) {
+  std::ofstream out;
   std::vector<double> centrality(num_vertices(g));
   graph_traits<LitGraph>::vertex_iterator i, end;
   
@@ -92,12 +94,16 @@ void get_centrality(LitGraph& g) {
   // sort centrality vector
   std::sort(centrality_vector.begin(), centrality_vector.end(), compare_by_centrality<centrality_s>());
 
-  
-  std::cout << endl << endl;
-  std::cout << "CENTRALITY," << std::endl;
-  std::cout << "alias,centrality,pub_key" << std::endl;
-  std::for_each(centrality_vector.begin(), centrality_vector.begin() + 20, print_centrality_s<centrality_s>());  
-  std::cout << endl << endl;
+  out.open("out/centrality.csv", std::fstream::out | std::fstream::trunc);
+
+  out << "alias,centrality,pub_key" << std::endl;
+  for(std::vector<centrality_s>::iterator centrality_iter = centrality_vector.begin(); centrality_iter != centrality_vector.end(); centrality_iter++){
+    out << "\"" << centrality_iter->name << "\""
+        << "," << centrality_iter->centrality
+        << "," << centrality_iter->pub_key
+        << std::endl;
+  }
+  out.close();
 
   double dominance =  central_point_dominance(g, make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()));
   std::cout << endl << endl;
