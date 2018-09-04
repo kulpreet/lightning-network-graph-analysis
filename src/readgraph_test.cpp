@@ -14,7 +14,7 @@ struct Graph
     Graph()
     {
         BOOST_TEST_MESSAGE("setup mass");
-        readgraph(g);
+        readgraph(g, std::cin);
     }
  
     ~Graph()

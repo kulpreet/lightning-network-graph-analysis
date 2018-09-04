@@ -65,7 +65,7 @@ template <class Graph> struct print_vertex {
   }
 };
 
-void get_centrality(LitGraph& g) {
+void get_centrality(LitGraph& g, string& stem) {
   std::ofstream out;
   std::vector<double> centrality(num_vertices(g));
   graph_traits<LitGraph>::vertex_iterator i, end;
@@ -94,10 +94,12 @@ void get_centrality(LitGraph& g) {
   // sort centrality vector
   std::sort(centrality_vector.begin(), centrality_vector.end(), compare_by_centrality<centrality_s>());
 
-  out.open("out/centrality.csv", std::fstream::out | std::fstream::trunc);
+  out.open("out/" + stem + ".centrality.csv", std::fstream::out | std::fstream::trunc);
 
   out << "alias,centrality,pub_key" << std::endl;
-  for(std::vector<centrality_s>::iterator centrality_iter = centrality_vector.begin(); centrality_iter != centrality_vector.end(); centrality_iter++){
+  for(std::vector<centrality_s>::iterator centrality_iter = centrality_vector.begin();
+      centrality_iter != centrality_vector.begin() + 50;
+      centrality_iter++){
     out << "\"" << centrality_iter->name << "\""
         << "," << centrality_iter->centrality
         << "," << centrality_iter->pub_key
@@ -106,24 +108,35 @@ void get_centrality(LitGraph& g) {
   out.close();
 
   double dominance =  central_point_dominance(g, make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()));
-  std::cout << endl << endl;
-  std::cout << "DOMINANCE :: " << dominance;
+  out.open("out/cpd.csv", std::fstream::out | std::fstream::app);
+  out << stem << "," << dominance << std::endl;
+  out.close();
 }
 
-void sort_and_print_art_points(std::vector<Vertex>& art_points, LitGraph& g){
+void sort_and_print_art_points(std::vector<Vertex>& art_points, LitGraph& g, string& stem){
+  std::ofstream out;
+  out.open("out/" + stem + ".all_ap.csv", std::fstream::out | std::fstream::trunc);
+
+  out << "alias,degree,pub_key" << std::endl;
   std::sort(art_points.begin(), art_points.end(), compare_by_degree<LitGraph>(g));
   // print top art points
-  std::cout << endl << endl;
-  std::cout << "All Articulation Points," << std::endl;
-  std::cout << "alias,degree,pub_key" << std::endl;
-  std::for_each(art_points.begin(), art_points.end(), print_vertex<LitGraph>(g));
+  std::for_each(art_points.begin(), art_points.end(),
+                [&out, &g](Vertex& v){
+                  out << "\"" << g[v].name << "\""
+                      << "," << degree(v, g)
+                      << "," << g[v].pub_key
+                      << std::endl;                  
+                });
+  
+  out.close();
 }
 
-void find_non_singleton_components(std::vector<Vertex>& art_points, LitGraph& g){
+void find_non_singleton_components(std::vector<Vertex>& art_points, LitGraph& g, string& stem){
   
   // make a map component id to component size
   std::map<int, int> component_sizes;
   std::vector<Vertex>::iterator i;
+  std::ofstream out;
 
   graph_traits < LitGraph >::edge_iterator ei, ei_end;
   graph_traits<LitGraph>::out_edge_iterator out_i, out_end;
@@ -169,36 +182,45 @@ void find_non_singleton_components(std::vector<Vertex>& art_points, LitGraph& g)
       interesting_art_points[*i] = component_ids;
     }
   }
-  std::cout << "Found components: " << component_sizes.size() << std::endl;
-  // for(std::map<int, int>::iterator x = component_sizes.begin(); x != component_sizes.end(); x++){
-  //   std::cout << "component id " << x->first << " with size = " << x->second << endl;
-  // }
 
-  std::cout << "Found interesting art points: " << interesting_art_points.size() << std::endl;
+  // date, #components, #interesting art points
+  out.open("out/key_ap_stats.csv", std::fstream::out | std::fstream::app);
+  out << stem << ","
+      << component_sizes.size() << ","
+      << interesting_art_points.size()
+      << std::endl;
+  out.close();
 
-  std::cout << endl << endl;
-  std::cout << "Key Articulation Points," << std::endl;
-  std::cout << "alias,num components, degree, pub_key" << std::endl;
+  out.open("out/" + stem + ".key_ap.csv", std::fstream::out | std::fstream::trunc);
+
+  // Key Articulation Points
+  out << "alias,num components,degree,pub_key" << std::endl;
   for(std::map<int, set<int> >::iterator x = interesting_art_points.begin(); x != interesting_art_points.end(); x++) {
-    std::cout << "\"" << g[x->first].name << "\""
-              << "," << (x->second).size()
-              << "," << degree(x->first, g)
-              << "," << g[x->first].pub_key
-              << endl;
+    out << "\"" << g[x->first].name << "\""
+        << "," << (x->second).size()
+        << "," << degree(x->first, g)
+        << "," << g[x->first].pub_key
+        << endl;
   }
-  std::cout << endl << endl;
+  out.close();
 }
 
-void get_articulation_points(LitGraph& g) {
+void get_articulation_points(LitGraph& g, string& stem) {
+  std::ofstream out;
   std::vector<Vertex> art_points;
   std::pair<std::size_t, std::back_insert_iterator<std::vector<Vertex> > >
     results = biconnected_components(g, get(&LitEdge::component, g), std::back_inserter(art_points));
 
-  std::cout << "Found " << results.first << " biconnected components.\n";    
-  std::cout << "Found " << art_points.size() << " articulation points.\n";
-
-  find_non_singleton_components(art_points, g);
-  sort_and_print_art_points(art_points, g);
+  // date, #components, #interesting art points
+  out.open("out/all_ap_stats.csv", std::fstream::out | std::fstream::app);
+  out << stem << ","
+      << results.first << ","
+      << art_points.size()
+      << std::endl;
+  out.close();
+  
+  find_non_singleton_components(art_points, g, stem);
+  sort_and_print_art_points(art_points, g, stem);
 }
 
 template <class Graph> struct degrees {

@@ -1,4 +1,6 @@
 #include "readgraph.hpp"
+#include <fstream>
+
 
 boost::dynamic_properties build_properties(LitGraph& g) {
   boost::dynamic_properties dp;
@@ -21,8 +23,7 @@ boost::dynamic_properties build_properties(LitGraph& g) {
   return dp;
 };
                                            
-void readgraph(LitGraph& g) {
-  std::cout << "reading graph..." << std::endl;
+void readgraph(LitGraph& g, std::istream& filestream) {
   boost::dynamic_properties dp = build_properties(g);
-  boost::read_graphml(std::cin, g, dp);
+  boost::read_graphml(filestream, g, dp);
 };

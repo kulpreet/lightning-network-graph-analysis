@@ -1,5 +1,5 @@
 
-* Graph Analysis [6/7]
+* Graph Analysis [7/7]
 
 1. [X] Convert json to graphml
 2. [X] Load graphml in BGL
@@ -7,17 +7,27 @@
 4. [X] Find mean and variance on degrees
 5. [X] Run biconnected graph algo
 6. [X] Run atriculation points algo
-7. [ ] Run centrality algorithm
+7. [X] Run centrality algorithm
 
-* Analysis Output [0/3]
+* Analysis Output [3/3]
 
-1. [ ] Centrality
-2. [ ] Articulation points with the highest degrees
-3. [ ] Biconnected components sorted by size
-   1. [ ] Component number
-   2. [ ] Number of nodes in the component
-   3. [ ] Pubkeys of nodes in the component to be downloaded as a list of ids only
+1. [X] Centrality
+2. [X] Articulation points with the highest degrees
+3. [X] Biconnected components sorted by size
+   1. [X] Component number
+   2. [X] Number of nodes in the component
+   3. [X] Pubkeys of nodes in the component to be downloaded as a list of ids only
 
-* Presentation [/]
+* Presentation [0/3]
 
-1.
+1. [ ] Chart of central point dominance by date
+2. [ ] List of top 20 "interesting" articulation points
+3. [ ] Page has CPD chart and art points and centrality lists below it
+   for the current day, with option to see the lists for a selected day
+
+* I/O 
+
+1. [X] Read from filename
+2. [X] Write central point dominance to filename.cpd
+3. [X] Write centrality csv to filename.centrality.csv
+4. [X] Write top articulation points to filename.ap.csv

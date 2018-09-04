@@ -4,3 +4,4 @@ data/testnet.xml
 *.o
 test_readgraph
 out
+archive

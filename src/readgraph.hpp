@@ -39,4 +39,4 @@ typedef graph_traits<LitGraph>::vertex_iterator vertex_iter;
 typedef graph_traits<LitGraph>::vertex_descriptor Vertex;
 
 
-void readgraph(LitGraph& g);
+void readgraph(LitGraph& g, std::istream& filestream);
