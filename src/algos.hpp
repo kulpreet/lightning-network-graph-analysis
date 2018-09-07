@@ -65,7 +65,7 @@ template <class Graph> struct print_vertex {
   }
 };
 
-void get_centrality(LitGraph& g, string& stem) {
+void get_centrality(LitGraph& g, string& stem, string& outdir) {
   std::ofstream out;
   std::vector<double> centrality(num_vertices(g));
   graph_traits<LitGraph>::vertex_iterator i, end;
@@ -94,7 +94,7 @@ void get_centrality(LitGraph& g, string& stem) {
   // sort centrality vector
   std::sort(centrality_vector.begin(), centrality_vector.end(), compare_by_centrality<centrality_s>());
 
-  out.open("out/" + stem + ".centrality.csv", std::fstream::out | std::fstream::trunc);
+  out.open(outdir + "/" + stem + ".centrality.csv", std::fstream::out | std::fstream::trunc);
 
   out << "alias,centrality,pub_key" << std::endl;
   for(std::vector<centrality_s>::iterator centrality_iter = centrality_vector.begin();
@@ -108,14 +108,14 @@ void get_centrality(LitGraph& g, string& stem) {
   out.close();
 
   double dominance =  central_point_dominance(g, make_iterator_property_map(centrality.begin(), get(vertex_index, g), double()));
-  out.open("out/cpd.csv", std::fstream::out | std::fstream::app);
+  out.open(outdir + "/cpd.csv", std::fstream::out | std::fstream::app);
   out << stem << "," << dominance << std::endl;
   out.close();
 }
 
-void sort_and_print_art_points(std::vector<Vertex>& art_points, LitGraph& g, string& stem){
+void sort_and_print_art_points(std::vector<Vertex>& art_points, LitGraph& g, string& stem, string& outdir){
   std::ofstream out;
-  out.open("out/" + stem + ".all_ap.csv", std::fstream::out | std::fstream::trunc);
+  out.open(outdir + "/" + stem + ".all_ap.csv", std::fstream::out | std::fstream::trunc);
 
   out << "alias,degree,pub_key" << std::endl;
   std::sort(art_points.begin(), art_points.end(), compare_by_degree<LitGraph>(g));
@@ -131,7 +131,7 @@ void sort_and_print_art_points(std::vector<Vertex>& art_points, LitGraph& g, str
   out.close();
 }
 
-void find_non_singleton_components(std::vector<Vertex>& art_points, LitGraph& g, string& stem){
+void find_non_singleton_components(std::vector<Vertex>& art_points, LitGraph& g, string& stem, string& outdir){
   
   // make a map component id to component size
   std::map<int, int> component_sizes;
@@ -184,14 +184,14 @@ void find_non_singleton_components(std::vector<Vertex>& art_points, LitGraph& g,
   }
 
   // date, #components, #interesting art points
-  out.open("out/key_ap_stats.csv", std::fstream::out | std::fstream::app);
+  out.open(outdir + "/key_ap_stats.csv", std::fstream::out | std::fstream::app);
   out << stem << ","
       << component_sizes.size() << ","
       << interesting_art_points.size()
       << std::endl;
   out.close();
 
-  out.open("out/" + stem + ".key_ap.csv", std::fstream::out | std::fstream::trunc);
+  out.open(outdir + "/" + stem + ".key_ap.csv", std::fstream::out | std::fstream::trunc);
 
   // Key Articulation Points
   out << "alias,num components,degree,pub_key" << std::endl;
@@ -205,22 +205,22 @@ void find_non_singleton_components(std::vector<Vertex>& art_points, LitGraph& g,
   out.close();
 }
 
-void get_articulation_points(LitGraph& g, string& stem) {
+void get_articulation_points(LitGraph& g, string& stem, string& outdir) {
   std::ofstream out;
   std::vector<Vertex> art_points;
   std::pair<std::size_t, std::back_insert_iterator<std::vector<Vertex> > >
     results = biconnected_components(g, get(&LitEdge::component, g), std::back_inserter(art_points));
 
   // date, #components, #interesting art points
-  out.open("out/all_ap_stats.csv", std::fstream::out | std::fstream::app);
+  out.open(outdir + "/all_ap_stats.csv", std::fstream::out | std::fstream::app);
   out << stem << ","
       << results.first << ","
       << art_points.size()
       << std::endl;
   out.close();
   
-  find_non_singleton_components(art_points, g, stem);
-  sort_and_print_art_points(art_points, g, stem);
+  find_non_singleton_components(art_points, g, stem, outdir);
+  sort_and_print_art_points(art_points, g, stem, outdir);
 }
 
 template <class Graph> struct degrees {

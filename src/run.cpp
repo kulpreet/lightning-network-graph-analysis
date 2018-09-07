@@ -11,13 +11,13 @@
 
 int main(int ac, char** av) {
   LitGraph g;
-  string filename, stem;
+  string filename, stem, outdir;
   namespace po = boost::program_options;
   po::options_description desc("Allowed options");
   desc.add_options()
     ("help", "produce help message")
     ("input", po::value<string>(), "filename for the graphml file to process")
-    ;
+    ("outdir", po::value<string>(), "directory to save output files in");
   
   po::variables_map vm;
   po::store(po::parse_command_line(ac, av, desc), vm);
@@ -28,6 +28,13 @@ int main(int ac, char** av) {
     return 0;
   }
 
+  if (vm.count("outdir")) {
+    outdir = vm["outdir"].as<string>();
+  } else {
+    cout << "No output directory specified" << "\n";
+    return 1;
+  }
+  
   if (vm.count("input")) {
     filename = vm["input"].as<string>();
     boost::filesystem::path p(filename);
@@ -79,9 +86,9 @@ int main(int ac, char** av) {
   // //   std::cout << i->first << ' ' << i->second << endl;
   // // }
 
-  get_articulation_points(g, stem);
+  get_articulation_points(g, stem, outdir);
 
-  get_centrality(g, stem);
+  get_centrality(g, stem, outdir);
   
   // return 0;
 }
