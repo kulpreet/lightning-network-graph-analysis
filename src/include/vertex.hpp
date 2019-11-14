@@ -37,6 +37,7 @@ using namespace boost::accumulators;
 
 namespace lncentrality {
 
+// function object for printing debug information about a vertex
 template <class Graph> class exercise_vertex {
 public:
     typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -50,7 +51,7 @@ public:
 
         std::cout << "vertex: " << get(vertex_id, v) << std::endl;
 
-        // Write out the outgoing edges
+        // Print out the outgoing edges
         std::cout << "\tout-edges: ";
         typename graph_traits<Graph>::out_edge_iterator out_i, out_end;
         typename graph_traits<Graph>::edge_descriptor e;

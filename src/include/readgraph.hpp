@@ -32,6 +32,7 @@ using namespace std;
 
 namespace lncentrality {
 
+// A struct used to store vertex properties in the graph.
 struct LitVertex {
   string id;
   string pub_key;
@@ -40,6 +41,7 @@ struct LitVertex {
   string alias;
 };
 
+// A struct used to store edge properties in the graph.
 struct LitEdge {
   string id;
   string source;
@@ -55,13 +57,23 @@ struct LitEdge {
   int component;
 };
 
+// Specify LitGraph to use an adjacency list with std::vector (vecS)
+// for storing out edges and vertices. The graph is an undirected
+// graph.
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
                               LitVertex, LitEdge>
     LitGraph;
 
+// typedef graph traits
 typedef graph_traits<LitGraph>::vertex_iterator vertex_iter;
 typedef graph_traits<LitGraph>::vertex_descriptor Vertex;
 
+// Read the graph using boost's read_graphml function.
+//
+// Graph is read from an already opened filestream. This function will
+// not close the filestream, the caller is required to do that.
+//
+// Graph is stored in the LitGraph reference.
 void readgraph(LitGraph &g, std::istream &filestream);
 
 } // namespace lncentrality

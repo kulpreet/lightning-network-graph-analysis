@@ -19,6 +19,9 @@
  * THE SOFTWARE.
  */
 
+// The functions in this file are useful for implementing new
+// algorithms and finding simple stats about the graph.
+
 #ifndef LNCENTRALITY_DEGREE_STATS_HPP
 #define LNCENTRALITY_DEGREE_STATS_HPP
 
@@ -39,6 +42,8 @@ namespace lncentrality {
 
 typedef graph_traits<LitGraph>::degree_size_type Degree;
 
+// A class that provides a function object for iterating over all
+// vertices in the graph and printing the in/out degrees.
 template <class Graph> class degrees {
 public:
   typedef typename graph_traits<Graph>::vertex_descriptor Vertex;
@@ -63,6 +68,8 @@ private:
   Graph &g;
 };
 
+// For each vertex in the graph, set in/out/total degree in the
+// vectors provided.
 void get_degrees(vector<Degree> &in_degrees, vector<Degree> &out_degrees,
                  vector<Degree> &degrees, LitGraph &g) {
   graph_traits<LitGraph>::vertex_iterator i, end;
@@ -73,6 +80,8 @@ void get_degrees(vector<Degree> &in_degrees, vector<Degree> &out_degrees,
   }
 }
 
+// Compute simple stats about degrees for each vertex in the graph and
+// print those.
 map<string, double> get_degrees_stats(LitGraph &g) {
   graph_traits<LitGraph>::vertex_iterator i, end;
   accumulator_set<Degree, stats<tag::mean, tag::variance>> in_degrees,

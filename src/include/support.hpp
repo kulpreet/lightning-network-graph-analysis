@@ -19,6 +19,9 @@
  * THE SOFTWARE.
  */
 
+// The file include functions that are used as function objects for
+// printing debug information about LN graph.
+
 #ifndef LNCENTRALITY_SUPPORT_HPP
 #define LNCENTRALITY_SUPPORT_HPP
 
@@ -35,13 +38,14 @@
 
 namespace lncentrality {
 
+// A struct to encapsulate centrality result for a node.
 struct centrality_s {
   string name;
   string pub_key;
   double centrality;
 };
 
-
+// prints all edges along with the component number it belongs to.
 void print_edges_with_components(LitGraph &g) {
   graph_traits<LitGraph>::vertex_descriptor src, tgt;
   graph_traits<LitGraph>::edge_iterator ei, ei_end;
@@ -55,6 +59,7 @@ void print_edges_with_components(LitGraph &g) {
   }
 }
 
+// function object for comparing centralities of two nodes.
 template <class centrality_s> class compare_by_centrality {
 public:
   int operator()(const centrality_s &a, const centrality_s &b) const {
@@ -62,6 +67,7 @@ public:
   }
 };
 
+// function object for comparing degrees of two nodes.
 template <class Graph> class compare_by_degree {
 public:
   compare_by_degree(Graph &g_) : g(g_) {}
@@ -74,6 +80,7 @@ private:
   Graph &g;
 };
 
+// function object for printing details of a centrality_s
 template <class Graph> class print_centrality_s {
 public:
   void operator()(const centrality_s &s) const {
@@ -82,6 +89,7 @@ public:
   }
 };
 
+// function object for printing details of a graph vertex.
 template <class Graph> class print_vertex {
 public:
   print_vertex(Graph &g_) : g(g_) {}

@@ -24,6 +24,8 @@
 
 namespace lncentrality {
 
+// Given a LitGraph, builds BGL properties to be captured at each node
+// of the graph.
 boost::dynamic_properties build_properties(LitGraph &g) {
 
   boost::dynamic_properties dp;

@@ -38,6 +38,18 @@ using namespace boost::accumulators;
 
 namespace lncentrality {
 
+// Given a graph g, computes the centrality stats for the graph and
+// stores them in outdir with stem as part of the filename.
+//
+// Callers can therefore specify the full filename to save the
+// outputs.
+//
+// Stats computed:
+//
+// 1. Betweeness centrality for all nodes in the graph. Then stored in
+// stem.centrality.csv.
+//
+// 2. Central point dominance of the graph. Stored in cpd.csv.
 void get_centrality(LitGraph &g, string &stem, string &outdir) {
   std::ofstream out;
   std::vector<double> centrality(num_vertices(g));
@@ -87,6 +99,9 @@ void get_centrality(LitGraph &g, string &stem, string &outdir) {
   out.close();
 }
 
+// Sorts inplace, the list of articulation points, art_points.
+//
+// Stores the sorted list in stem.all_ap.csv
 void sort_and_print_art_points(std::vector<Vertex> &art_points, LitGraph &g,
                                string &stem, string &outdir) {
   std::ofstream out;
@@ -105,6 +120,15 @@ void sort_and_print_art_points(std::vector<Vertex> &art_points, LitGraph &g,
   out.close();
 }
 
+
+// For a list of articulation points, art_points, already identified
+// for the LitGraph g, find only those articulation points that
+// connects components of size greater than one.
+//
+// Stores the interesting articulation points in stem.key_ap.csv.
+//
+// Also stores for each run, the time, number of biconnected components
+// and the number of articulation points in stem.key_ap_stats.csv
 void find_non_singleton_components(std::vector<Vertex> &art_points, LitGraph &g,
                                    string &stem, string &outdir) {
 
@@ -122,12 +146,14 @@ void find_non_singleton_components(std::vector<Vertex> &art_points, LitGraph &g,
   std::map<int, set<int>> interesting_art_points;
   int num_interesting;
 
+  // find the size of components by iterating over all edges.
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     component_sizes[g[*ei].component]++;
   }
 
-  // iterate over all edges
-  // select those edges where component size on both vertices are greater than 1
+  // iterate over all edges again and select those edges where
+  // component size on both vertices are greater than 1. This and the
+  // previous loop can probably be optimised.
   for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
     if (component_sizes[g[*ei].component] == 1) {
       bridges.push_back(*ei);
@@ -151,18 +177,14 @@ void find_non_singleton_components(std::vector<Vertex> &art_points, LitGraph &g,
                           }
                           return a;
                         });
-    // std::cout << "art point " << *i << " num components = " <<
-    // component_ids.size() << std::endl; std::cout << "art point " << *i << "
-    // num interesting = " << num_interesting << std::endl; return art points
-    // that have 2 or more components with size > 1/2/3/4/5
+    // change the min size of components to consider "interesting"
     if (num_interesting > 1) {
-      // std::cout << "art point is an interesting art point " << *i <<
-      // std::endl;
       interesting_art_points[*i] = component_ids;
     }
   }
 
-  // date, #components, #interesting art points
+  // date, #components, #interesting art points. No header output as
+  // this is appended to file.
   out.open(outdir + "/key_ap_stats.csv", std::fstream::out | std::fstream::app);
   out << stem << "," << component_sizes.size() << ","
       << interesting_art_points.size() << std::endl;
@@ -171,7 +193,7 @@ void find_non_singleton_components(std::vector<Vertex> &art_points, LitGraph &g,
   out.open(outdir + "/" + stem + ".key_ap.csv",
            std::fstream::out | std::fstream::trunc);
 
-  // Key Articulation Points
+  // Key Articulation Points. Header included.
   out << "alias,num components,degree,pub_key" << std::endl;
   for (std::map<int, set<int>>::iterator x = interesting_art_points.begin();
        x != interesting_art_points.end(); x++) {
@@ -182,6 +204,18 @@ void find_non_singleton_components(std::vector<Vertex> &art_points, LitGraph &g,
   out.close();
 }
 
+// For a given graph, g, find stats about articulation points and
+// store to file. The filename is based on outdir and stem.
+//
+// Stats computed:
+//
+// 1. Number of biconnected components. Stored in all_ap_stats.csv
+//
+// 2. Number of components with more than one node. Stored in
+// key_ap_stats.csv.in
+//
+// 3. Identify all nodes that are articulation points in the
+// graph. Stored in stem-all_ap.csv
 void get_articulation_points(LitGraph &g, string &stem, string &outdir) {
   std::ofstream out;
   std::vector<Vertex> art_points;
