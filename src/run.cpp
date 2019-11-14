@@ -7,6 +7,8 @@
 #include <boost/filesystem.hpp>
 
 #include "include/algos.hpp"
+#include "include/degree_stats.hpp"
+#include "include/vertex.hpp"
 
 using namespace lncentrality;
 

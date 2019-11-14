@@ -1,3 +1,6 @@
+#ifndef LNCENTRALITY_READGRAPH_HPP
+#define LNCENTRALITY_READGRAPH_HPP
+
 #include <boost/graph/biconnected_components.hpp>
 #include <boost/graph/graph_utility.hpp>
 #include <boost/graph/graphml.hpp>
@@ -31,10 +34,6 @@ struct LitEdge {
   int component;
 };
 
-// typedef boost::adjacency_list<boost::vecS, boost::vecS,
-// boost::bidirectionalS,
-//                               LitVertex, LitEdge> LitGraph;
-
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
                               LitVertex, LitEdge>
     LitGraph;
@@ -45,3 +44,5 @@ typedef graph_traits<LitGraph>::vertex_descriptor Vertex;
 void readgraph(LitGraph &g, std::istream &filestream);
 
 } // namespace lncentrality
+
+#endif

@@ -5,6 +5,8 @@
 #include <boost/test/unit_test.hpp>
 
 #include "include/algos.hpp"
+#include "include/degree_stats.hpp"
+#include "include/vertex.hpp"
 
 using namespace lncentrality;
 

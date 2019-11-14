@@ -11,7 +11,7 @@ boost::dynamic_properties build_properties(LitGraph &g) {
 
   dp.property("source", get(&LitEdge::source, g));
   dp.property("target", get(&LitEdge::target, g));
-  
+
   dp.property("chan_point", get(&LitEdge::chan_point, g));
   dp.property("last_update", get(&LitEdge::last_update, g));
   dp.property("capacity", get(&LitEdge::capacity, g));
