@@ -1,10 +1,12 @@
-#include <boost/graph/graphml.hpp>
-#include <boost/graph/graph_utility.hpp>
-#include <iostream>
 #include <boost/graph/biconnected_components.hpp>
+#include <boost/graph/graph_utility.hpp>
+#include <boost/graph/graphml.hpp>
+#include <iostream>
 
 using namespace boost;
 using namespace std;
+
+namespace lncentrality {
 
 struct LitVertex {
   string id;
@@ -29,14 +31,17 @@ struct LitEdge {
   int component;
 };
 
-// typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::bidirectionalS,
+// typedef boost::adjacency_list<boost::vecS, boost::vecS,
+// boost::bidirectionalS,
 //                               LitVertex, LitEdge> LitGraph;
 
 typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
-                              LitVertex, LitEdge> LitGraph;
+                              LitVertex, LitEdge>
+    LitGraph;
 
 typedef graph_traits<LitGraph>::vertex_iterator vertex_iter;
 typedef graph_traits<LitGraph>::vertex_descriptor Vertex;
 
+void readgraph(LitGraph &g, std::istream &filestream);
 
-void readgraph(LitGraph& g, std::istream& filestream);
+} // namespace lncentrality

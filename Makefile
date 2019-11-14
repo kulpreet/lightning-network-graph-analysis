@@ -5,16 +5,16 @@ RM=rm -f
 
 all: run build_test
 
-readgraph.o: src/readgraph.cpp src/readgraph.hpp
-	$(CXX) $(CXXFLAGS) -c src/readgraph.cpp 
+readgraph.o: src/readgraph.cpp src/include/readgraph.hpp
+	$(CXX) $(CXXFLAGS) -c src/readgraph.cpp
 
-run.o: src/readgraph.cpp src/readgraph.hpp src/readgraph.cpp src/run.cpp src/algos.hpp
+run.o: src/readgraph.cpp src/include/readgraph.hpp src/readgraph.cpp src/run.cpp src/include/algos.hpp
 	$(CXX) $(CXXFLAGS) -c src/run.cpp
 
 run: run.o readgraph.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o readgraph run.o readgraph.o -lboost_graph -lboost_program_options -lboost_system -lboost_filesystem
 
-readgraph_test.o: src/readgraph.cpp src/readgraph.hpp src/readgraph_test.cpp
+readgraph_test.o: src/readgraph.cpp src/include/readgraph.hpp src/readgraph_test.cpp
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) -c src/readgraph_test.cpp
 
 build_test: readgraph.o readgraph_test.o
